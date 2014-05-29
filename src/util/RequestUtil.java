@@ -10,34 +10,28 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+/**
+ * 
+ * @author i-xiepenggang
+ * @category 用于发送HTTP请求
+ */
 public class RequestUtil {
 
-	private String mUrl = null;
-	private String mResult = null;
-	private String mRqContent = null;
-	private static final RequestUtil mSelf = new RequestUtil();
-	private String mContentEncoding = "GBK";
-	private onRequestListener mRequestListener = null;
-	
+	protected String mUrl = null;
+	protected String mRqContent = null;
+	protected String mContentEncoding = "GBK";
+	protected String mResultContent = "";
 	public static int RETR_SUCCESS = 0x001;
 	public static int RETR_FAIL = 0x002;
+	protected Date mRequestDate = null;
+	protected String mHandleSpanTime = "";
 
-	public static interface onRequestListener {
-		public void onRead(String str,int rtrcode);
-	}
+	public RequestUtil() {
 
-	private RequestUtil() {
-
-	}
-
-	public static RequestUtil newInstace() {
-		
-		return mSelf;
-	}
-
-	public void addRequestListener(onRequestListener rl) {
-		this.mRequestListener = rl;
 	}
 
 	public void setUrl(String url) {
@@ -47,34 +41,45 @@ public class RequestUtil {
 	public String getUrl() {
 		return mUrl;
 	}
-	
-	public void setRequestContent(String content){
+
+	protected String getHandleSpanTime() {
+		return mHandleSpanTime;
+	}
+
+	protected String getRequestDate() {
+		DateFormat format2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		String reTime = format2.format(mRequestDate);
+		return reTime;
+	}
+
+	public void setRequestContent(String content) {
 		this.mRqContent = content;
 	}
-	public String getRequestContent(){
+
+	public String getRequestContent() {
 		return mRqContent;
 	}
-	
-	public void setContentEncoding(String en){
+
+	public void setContentEncoding(String en) {
 		this.mContentEncoding = en;
 	}
-	
-	public String getContentEncoding(){
+
+	public String getContentEncoding() {
 		return this.mContentEncoding;
 	}
 
 	public void sendGet() {
-		if(false == checkParam()){
+		if (false == checkParam()) {
 			return;
 		}
-		
+
 		try {
 			URL url = new URL(mUrl);
 
 			try {
 				HttpURLConnection urlcon = (HttpURLConnection) url
 						.openConnection();
-				
+
 				urlcon.connect();
 
 				DataInputStream dis = new DataInputStream(
@@ -91,33 +96,32 @@ public class RequestUtil {
 				dis.close();
 				urlcon.disconnect();
 
-				String strContent = new String(bao.toByteArray(), "utf-8");
-				sendMessage(strContent,this.RETR_SUCCESS);
+				mResultContent = new String(bao.toByteArray(), "utf-8");
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				sendMessage(e.toString(),this.RETR_FAIL);
+				printMessage(e.toString(), RequestUtil.RETR_FAIL);
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			sendMessage(e.toString(),this.RETR_FAIL);
+			printMessage(e.toString(), RequestUtil.RETR_FAIL);
 		}
 
 	}
 
 	public void sendPost() {
 
-		if(false == checkParam()){
+		if (false == checkParam()) {
 			return;
 		}
-		
+
 		try {
 			URL url = new URL(mUrl);
-			
+
 			try {
 				HttpURLConnection urlcon = (HttpURLConnection) url
 						.openConnection();
-				
+
 				urlcon.setRequestMethod("POST");
 
 				urlcon.setConnectTimeout(2000);
@@ -125,17 +129,19 @@ public class RequestUtil {
 				urlcon.setDoInput(true);
 				urlcon.connect();
 
-				// httpUrlConnection.setRequestProperty("content-type", "text/xml");
+				// httpUrlConnection.setRequestProperty("content-type",
+				// "text/xml");
 
 				OutputStream output = new BufferedOutputStream(
 						urlcon.getOutputStream());
 
-				OutputStreamWriter writer = new OutputStreamWriter(output,mContentEncoding);
+				OutputStreamWriter writer = new OutputStreamWriter(output,
+						mContentEncoding);
 
 				writer.write(mRqContent);
 				writer.flush();
 				writer.close();
-				
+
 				DataInputStream dis = new DataInputStream(
 						urlcon.getInputStream());
 
@@ -150,41 +156,46 @@ public class RequestUtil {
 				dis.close();
 				urlcon.disconnect();
 
-				String strContent = new String(bao.toByteArray(), "GBK");
-				sendMessage(strContent,RETR_SUCCESS);
+				mResultContent = new String(bao.toByteArray(), "GBK");
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				sendMessage(e.toString(),RETR_FAIL);
+				printMessage(e.toString(), RETR_FAIL);
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			sendMessage(e.toString(),RETR_FAIL);
+			printMessage(e.toString(), RETR_FAIL);
 		}
 	}
-	private boolean checkParam(){
-		
-		if((mUrl == null) || (mUrl.trim().equals(""))){
-			sendMessage("please set your url",RETR_FAIL);
+
+	protected boolean checkParam() {
+
+		if ((mUrl == null) || (mUrl.trim().equals(""))) {
+			printMessage("please set your url", RETR_FAIL);
 			return false;
 		}
-		
-		
+
 		return true;
 	}
-	private void sendMessage(String str,int code){
-		if(mRequestListener != null){
-			mRequestListener.onRead(str, code);
-		}
+
+	protected void printMessage(String str, int code) {
+		//System.out.println(str);
 	}
-	
+
 	public void sendRequest(String sEND_METHOD) {
 		// TODO Auto-generated method stub
+		mRequestDate = new Date();
 		String method = sEND_METHOD.toLowerCase();
 		if (method.equals("get")) {
 			sendGet();
 		} else if (method.equals("post")) {
 			sendPost();
 		}
+		Date endDate = new Date();
+		mHandleSpanTime = ((endDate.getTime() - mRequestDate.getTime()))/1000.0 + "";
+	}
+
+	protected String getResult() {
+		return mResultContent;
 	}
 }

@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Wed May 28 10:16:59 CST 2014
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=GisTool_fat.jar
+manifest.mergeall=true
+manifest.mainclass=GisTool
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=<po|GisTool>~lib/
+includes=
