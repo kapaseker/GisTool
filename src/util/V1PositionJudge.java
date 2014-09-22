@@ -6,12 +6,22 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import util.Interface.GerneralAnalysis;
-
+/**
+ * V1位置判断分析
+ * @author i-xiepenggang
+ *
+ */
 public class V1PositionJudge extends GerneralAnalysis {
 
 	@Override
 	public String getResultState() {
 		// TODO Auto-generated method stub
+		if(mResultContent.equals("")){
+			return RETR_BAD;
+		}
+		if(checkisXML() == false){
+			return RETR_WAR;
+		}
 		Document doc;
 		try {
 			doc = DocumentHelper.parseText(mResultContent);

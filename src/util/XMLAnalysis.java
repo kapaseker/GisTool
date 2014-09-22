@@ -11,6 +11,12 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+/**
+ * 
+ * @author i-xiepenggang
+ * @category XML分析器
+ */
+
 @SuppressWarnings("serial")
 public class XMLAnalysis extends ArrayList<Map<String, String>> {
 
@@ -18,23 +24,36 @@ public class XMLAnalysis extends ArrayList<Map<String, String>> {
 
 	// private ArrayList<Map<String, String>> mItemList = new
 	// ArrayList<Map<String, String>>();
-
+	
+	/**
+	 * 
+	 * 默认构造函数,使用默认在cfg路径下面的配置文件
+	 */
+	public XMLAnalysis(){
+		this(null);
+	}
+	/**
+	 * 
+	 * @param path 传递配置文件的参数
+	 */
 	public XMLAnalysis(String path) {
 		if (path == null) {
-			mXMLPath = "GIS.xml";
+			mXMLPath = "./cfg/GIS.xml";
 		} else {
 			mXMLPath = path;
 		}
 
 		init();
 	}
-
+	
+	 /**
+	  * 初始化...
+	  */
 	private void init() {
 
 		SAXReader reader = new SAXReader();
-
 		try {
-
+			//这个就是读取xml文件的一个分析器吧
 			Document gisDoc = reader.read(new File(mXMLPath));
 			Element rootEle = gisDoc.getRootElement();
 			Element serList = rootEle.element("ServiceList");
@@ -57,7 +76,7 @@ public class XMLAnalysis extends ArrayList<Map<String, String>> {
 
 		} catch (DocumentException e) {
 			// TODO Auto-generated catch block
-			System.out.println("没有找到文件");
+			e.printStackTrace();
 		}
 
 	}

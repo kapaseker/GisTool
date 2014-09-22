@@ -10,7 +10,11 @@ import java.util.Properties;
 import java.util.Set;
 
 import util.Interface.GerneralAnalysis;
-
+/**
+ * 
+ * @author i-xiepenggang
+ *@category 用于获得相关的分析服务的
+ */
 public class AnalysisBox {
 
 	private static Properties mServiceProperty = new Properties();
@@ -61,7 +65,12 @@ public class AnalysisBox {
 		}
 
 	}
-
+	/**
+	 * 获得相关的分析服务
+	 * @param key
+	 * @return 分析服务 GerneralAnalysis的一个实例
+	 * 
+	 */
 	public static GerneralAnalysis getService(String key) {
 
 		if (mServiceProperty.containsKey(key)) {

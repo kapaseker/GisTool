@@ -6,15 +6,23 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import util.Interface.GerneralAnalysis;
-
+/**
+ * 经纬度到屏幕坐标转换的分析
+ * @author i-xiepenggang
+ *
+ */
 public class V1LatLonTransform extends GerneralAnalysis {
 
 	@Override
 	public String getResultState() {
 		// TODO Auto-generated method stub
-
+		if(mResultContent.equals("")){
+			return RETR_BAD;
+		}
 		// TODO Auto-generated method stub
-
+		if(checkisXML() == false){
+			return RETR_WAR;
+		}
 		try {
 			Document doc = DocumentHelper.parseText(mResultContent);
 			Element rootElement = doc.getRootElement();

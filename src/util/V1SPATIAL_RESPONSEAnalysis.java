@@ -6,12 +6,22 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import util.Interface.GerneralAnalysis;
-
+/**
+ * v1版本的一个特殊机构,累觉不爱啊...这么多特殊情况
+ * @author i-xiepenggang
+ *
+ */
 public class V1SPATIAL_RESPONSEAnalysis extends GerneralAnalysis {
 
 	@Override
 	public String getResultState() {
 		// TODO Auto-generated method stub
+		if(mResultContent.equals("")){
+			return RETR_BAD;
+		}
+		if(checkisXML() == false){
+			return RETR_WAR;
+		}
 
 		try {
 			Document doc = DocumentHelper.parseText(mResultContent);
